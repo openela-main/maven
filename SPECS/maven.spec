@@ -7,7 +7,7 @@
 Name:           maven
 Epoch:          1
 Version:        3.8.5
-Release:        4%{?dist}
+Release:        6%{?dist}
 Summary:        Java project management and project comprehension tool
 # maven itself is ASL 2.0
 # bundled slf4j is MIT
@@ -147,6 +147,18 @@ Conflicts: maven-jdk-binding
 %description openjdk17
 Configures Maven to run with OpenJDK 17.
 
+%package openjdk21
+Summary:        OpenJDK 21 binding for Maven
+RemovePathPostfixes: -openjdk21
+Provides: maven-jdk-binding = %{epoch}:%{version}-%{release}
+Requires: maven = %{epoch}:%{version}-%{release}
+Requires: java-21-openjdk-headless
+Recommends: java-21-openjdk-devel
+Conflicts: maven-jdk-binding
+
+%description openjdk21
+Configures Maven to run with OpenJDK 21.
+
 %{?javadoc_package}
 
 %prep
@@ -256,6 +268,7 @@ install -d -m 755 %{buildroot}%{_javaconfdir}/
 echo JAVA_HOME=%{_jvmlibdir}/jre-1.8.0-openjdk >%{buildroot}%{_javaconfdir}/maven.conf-openjdk8
 echo JAVA_HOME=%{_jvmlibdir}/jre-11-openjdk >%{buildroot}%{_javaconfdir}/maven.conf-openjdk11
 echo JAVA_HOME=%{_jvmlibdir}/jre-17-openjdk >%{buildroot}%{_javaconfdir}/maven.conf-openjdk17
+echo JAVA_HOME=%{_jvmlibdir}/jre-21-openjdk >%{buildroot}%{_javaconfdir}/maven.conf-openjdk21
 
 
 %post
@@ -301,7 +314,17 @@ if [[ $1 -eq 0 ]]; then update-alternatives --remove mvn %{homedir}/bin/mvn; fi
 %files openjdk17
 %config %{_javaconfdir}/maven.conf-openjdk17
 
+%files openjdk21
+%config %{_javaconfdir}/maven.conf-openjdk21
+
 %changelog
+* Mon Feb 05 2024 Mikolaj Izdebski <mizdebsk@redhat.com> - 1:3.8.5-6
+- Rebuild to regenerate auto-requires
+
+* Mon Jan 22 2024 Marián Konček <mkoncek@redhat.com> - 1:3.8.5-5
+- Add OpenJDK 21 binding
+- Related: RHEL-13046
+
 * Thu Feb 02 2023 Mikolaj Izdebski <mizdebsk@redhat.com> - 1:3.8.5-4
 - Turn hard dependency on java-devel into a weak dependencny
 - Resolves: rhbz#2165595
