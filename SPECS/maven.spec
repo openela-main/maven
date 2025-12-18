@@ -7,7 +7,7 @@
 Name:           maven
 Epoch:          1
 Version:        3.9.9
-Release:        1%{?dist}
+Release:        3%{?dist}
 Summary:        Java project management and project comprehension tool
 # maven itself is Apache-2.0
 # bundled slf4j is MIT
@@ -218,6 +218,8 @@ install -d -m 755 %{buildroot}%{_javaconfdir}/
 ln -sf %{_jpbindingdir}/maven%{?maven_version_suffix}.conf %{buildroot}%{_javaconfdir}/maven%{?maven_version_suffix}.conf
 echo JAVA_HOME=%{_jvmdir}/jre-21-openjdk >%{buildroot}%{_javaconfdir}/maven%{?maven_version_suffix}-openjdk21.conf
 %jp_binding --verbose --variant openjdk21 --ghost maven%{?maven_version_suffix}.conf --target %{_javaconfdir}/maven%{?maven_version_suffix}-openjdk21.conf --provides %{name}-jdk-binding --requires java-21-openjdk-headless --recommends java-21-openjdk-devel
+echo JAVA_HOME=%{_jvmdir}/jre-25-openjdk >%{buildroot}%{_javaconfdir}/maven%{?maven_version_suffix}-openjdk25.conf
+%jp_binding --verbose --variant openjdk25 --ghost maven%{?maven_version_suffix}.conf --target %{_javaconfdir}/maven%{?maven_version_suffix}-openjdk25.conf --provides %{name}-jdk-binding --requires java-25-openjdk-headless --recommends java-25-openjdk-devel
 touch %{buildroot}%{_javaconfdir}/maven%{?maven_version_suffix}-unbound.conf
 %jp_binding --verbose --variant unbound --ghost maven%{?maven_version_suffix}.conf --target %{_javaconfdir}/maven%{?maven_version_suffix}-unbound.conf --provides %{name}-jdk-binding
 
@@ -257,6 +259,12 @@ if [[ $1 -eq 0 ]]; then update-alternatives --remove mvn %{homedir}/bin/mvn; fi
 %endif
 
 %changelog
+* Fri Oct 03 2025 Marián Konček <mkoncek@redhat.com> - 1:3.9.9-3
+- Add missing configuration file for maven-openjdk25
+
+* Mon Sep 29 2025 Marián Konček <mkoncek@redhat.com> - 1:3.9.9-2
+- Add maven-openjdk25 binding
+
 * Wed Dec 18 2024 Mikolaj Izdebski <mizdebsk@redhat.com> - 1:3.9.9-1
 - Update to upstream version 3.9.9
 
