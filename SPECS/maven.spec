@@ -7,7 +7,7 @@
 Name:           maven
 Epoch:          1
 Version:        3.9.9
-Release:        12%{?dist}
+Release:        13%{?dist}
 Summary:        Java project management and project comprehension tool
 # maven itself is Apache-2.0
 # bundled slf4j is MIT
@@ -182,6 +182,22 @@ Configures Maven to run with OpenJDK 21.
 %dir %{_jpbindingdir}/maven.conf.d
 %{_jpbindingdir}/maven.conf.d/openjdk21
 
+%package openjdk25
+Summary:        OpenJDK 25 binding for Maven
+Provides:       maven-jdk-binding = %{epoch}:%{version}-%{release}
+Requires:       java-25-openjdk-headless
+Recommends:     java-25-openjdk-devel
+Requires:       javapackages-tools >= 6.4.0
+Requires(meta): maven = %{epoch}:%{version}-%{release}
+
+%description openjdk25
+Configures Maven to run with OpenJDK 25.
+
+%files openjdk25
+%ghost %{_jpbindingdir}/maven.conf
+%dir %{_jpbindingdir}/maven.conf.d
+%{_jpbindingdir}/maven.conf.d/openjdk25
+
 %package unbound
 Summary:        Unbound Maven binding
 Provides:       maven-jdk-binding = %{epoch}:%{version}-%{release}
@@ -305,10 +321,12 @@ echo JAVA_HOME=%{_jvmdir}/jre-1.8.0-openjdk >%{buildroot}%{_javaconfdir}/maven%{
 echo JAVA_HOME=%{_jvmdir}/jre-11-openjdk >%{buildroot}%{_javaconfdir}/maven%{?maven_version_suffix}-openjdk11.conf
 echo JAVA_HOME=%{_jvmdir}/jre-17-openjdk >%{buildroot}%{_javaconfdir}/maven%{?maven_version_suffix}-openjdk17.conf
 echo JAVA_HOME=%{_jvmdir}/jre-21-openjdk >%{buildroot}%{_javaconfdir}/maven%{?maven_version_suffix}-openjdk21.conf
+echo JAVA_HOME=%{_jvmdir}/jre-25-openjdk >%{buildroot}%{_javaconfdir}/maven%{?maven_version_suffix}-openjdk25.conf
 %jp_binding --verbose --variant openjdk8 --ghost maven%{?maven_version_suffix}.conf --target %{_javaconfdir}/maven%{?maven_version_suffix}-openjdk8.conf --provides %{name}-jdk-binding --requires java-1.8.0-openjdk-headless --recommends java-1.8.0-openjdk-devel
 %jp_binding --verbose --variant openjdk11 --ghost maven%{?maven_version_suffix}.conf --target %{_javaconfdir}/maven%{?maven_version_suffix}-openjdk11.conf --provides %{name}-jdk-binding --requires java-11-openjdk-headless --recommends java-11-openjdk-devel
 %jp_binding --verbose --variant openjdk17 --ghost maven%{?maven_version_suffix}.conf --target %{_javaconfdir}/maven%{?maven_version_suffix}-openjdk17.conf --provides %{name}-jdk-binding --requires java-17-openjdk-headless --recommends java-17-openjdk-devel
 %jp_binding --verbose --variant openjdk21 --ghost maven%{?maven_version_suffix}.conf --target %{_javaconfdir}/maven%{?maven_version_suffix}-openjdk21.conf --provides %{name}-jdk-binding --requires java-21-openjdk-headless --recommends java-21-openjdk-devel
+%jp_binding --verbose --variant openjdk25 --ghost maven%{?maven_version_suffix}.conf --target %{_javaconfdir}/maven%{?maven_version_suffix}-openjdk25.conf --provides %{name}-jdk-binding --requires java-25-openjdk-headless --recommends java-25-openjdk-devel
 touch %{buildroot}%{_javaconfdir}/maven%{?maven_version_suffix}-unbound.conf
 %jp_binding --verbose --variant unbound --ghost maven%{?maven_version_suffix}.conf --target %{_javaconfdir}/maven%{?maven_version_suffix}-unbound.conf --provides %{name}-jdk-binding
 
@@ -351,6 +369,9 @@ if [[ $1 -eq 0 ]]; then update-alternatives --remove mvn %{homedir}/bin/mvn; fi
 %license LICENSE NOTICE
 
 %changelog
+* Wed Jan 07 2026 Marian Koncek <mkoncek@redhat.com> - 1:3.9.9-13
+- Add maven-openjdk25 binding
+
 * Mon Dec 02 2024 Mikolaj Izdebski <mizdebsk@redhat.com> - 1:3.9.9-12
 - Reuse jlink image if it already exists
 
